@@ -1,0 +1,26 @@
+{
+  "name": "npm-registry-mock",
+  "version": "0.1.0",
+  "description": "mock the npm registry",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "devDependencies": {
+    "mocha": "~1.12.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:robertkowalski/npm-registry-mock.git"
+  },
+  "author": "Robert Kowalski <rok@kowalski.gd>",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/robertkowalski/npm-registry-mock/issues"
+  },
+  "keywords": [
+    "npm",
+    "registry",
+    "testing"
+  ]
+}
