@@ -6,8 +6,16 @@
   "scripts": {
     "test": "mocha -R spec"
   },
+  "dependencies": {
+    "nock": "~0.22.1"
+  },
   "devDependencies": {
-    "mocha": "~1.12.0"
+    "mocha": "~1.12.0",
+    "npm-registry-client": "*",
+    "request": "~2.22.0",
+    "npm": "*",
+    "rimraf": "~2.2.0",
+    "mkdirp": "~0.3.5"
   },
   "repository": {
     "type": "git",
