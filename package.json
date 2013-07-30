@@ -7,7 +7,7 @@
     "test": "mocha -R spec"
   },
   "dependencies": {
-    "nock": "~0.22.1"
+    "hock": "~0.2.0"
   },
   "devDependencies": {
     "mocha": "~1.12.0",

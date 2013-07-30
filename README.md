@@ -6,17 +6,18 @@
 
 ##Usage
 
-Currently mocked packages are `underscore` at `1.3.1` and `1.5.1` while version `1.5.1` is the latest in this mocked registry.
+Currently mocked packages are `underscore` at 1.3.1 and 1.5.1 while version 1.5.1 is the latest in this mocked registry.
 
 Installing underscore 1.3.1:
 
 ```javascript
 var mr = require("npm-registry-mock")
 
-mr("http://localhost:1331", function () {
-  npm.load({registry: "http://localhost:1331"}, function () {
+mr(1331, function () {
+  npm.load({registry: "http://localhost:1331"}, function (s) {
     npm.commands.install("/tmp", "underscore@1.3.1", function (err) {
       // assert npm behaves right...
+      s.close() // shutdown server
     })
   })
 })
@@ -29,14 +30,15 @@ var mr = require("npm-registry-mock")
 
 var customMocks = {
   "get": {
-    "/mypackage": [500, function handler (uri, requestBody) { return {"ente200": "true" } }]
+    "/mypackage": [500, {"ente" : true}]
   }
 }
 
-mr({url: "http://localhost:1331", mocks: customMocks}, function () {
+mr({port: 1331, mocks: customMocks}, function (s) {
   npm.load({registry: "http://localhost:1331"}, function () {
     npm.commands.install("/tmp", "mypackage", function (err) {
       // assert npm behaves right with an 500 error as response...
+      s.close() // shutdown server
     })
   })
 })

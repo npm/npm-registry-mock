@@ -1,32 +1,43 @@
-var nock = require("nock")
+var hock = require("hock")
 var predefinedMocks = require("./lib/predefines.js").predefinedMocks
 
 module.exports = start
-function start (url, cb) {
+function start (port, cb) {
   var mocks = predefinedMocks
-  if (typeof url == "function") {
-    cb = url
-    url = "http://localhost:1331/"
+  if (typeof port == "function") {
+    cb = port
+    port = 1331
   }
-  if (typeof url == "object") {
-    mocks = url.mocks
-    url = url.url || "http://localhost:1331/"
+  if (typeof port == "object") {
+    mocks = port.mocks
+    port = port.port || 1331
   }
+  hock.createHock(port, function(err, hockServer) {
+    for (var method in mocks) {
+      for (var route in mocks[method]) {
+        var status = mocks[method][route][0]
+        var customTarget = mocks[method][route][1]
+        var isTarball = /.tgz$/.test(route)
+        if (isTarball) {
+          var target = __dirname + "/fixtures/" + route;
+          if (customTarget && typeof customTarget == 'string')
+            target = customTarget
 
-  for (var method in mocks) {
-    for (var route in mocks[method]) {
-      var status = mocks[method][route][0]
-      var handler = mocks[method][route][1]
-      var isTarball = /.tgz$/.test(route)
-      if (isTarball) {
-        nock(url)[method](route).replyWithFile(status, __dirname + "/fixtures/" + route);
-      } else if (handler) {
-        nock(url)[method](route).reply(status, handler)
-      } else {
-        var res = require("./fixtures/" + route)
-        nock(url)[method](route).reply(status, res)
+          hockServer[method](route).replyWithFile(status, target);
+        } else {
+          if (!customTarget)
+            var res = require("./fixtures/" + route)
+          else
+            try {
+              var res = require(customTarget)
+            } catch (e) {
+              var res = customTarget
+            }
+
+          hockServer[method](route).reply(status, res)
+        }
       }
     }
-  }
-  cb && cb()
+    cb && cb(hockServer)
+  })
 }
