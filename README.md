@@ -13,8 +13,8 @@ Installing underscore 1.3.1:
 ```javascript
 var mr = require("npm-registry-mock")
 
-mr(1331, function () {
-  npm.load({registry: "http://localhost:1331"}, function (s) {
+mr(1331, function (s) {
+  npm.load({registry: "http://localhost:1331"}, function () {
     npm.commands.install("/tmp", "underscore@1.3.1", function (err) {
       // assert npm behaves right...
       s.close() // shutdown server
