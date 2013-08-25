@@ -25,15 +25,17 @@ function start (port, cb) {
 
           hockServer[method](route).replyWithFile(status, target);
         } else {
-          if (!customTarget)
+          if (!customTarget) {
             var res = require("./fixtures/" + route)
-          else
+            res = JSON.stringify(res).replace(/http:\/\/registry\.npmjs\.org/ig, 'http://localhost:' + port)
+          }
+          else {
             try {
               var res = require(customTarget)
             } catch (e) {
               var res = customTarget
             }
-
+          }
           hockServer[method](route).reply(status, res)
         }
       }
