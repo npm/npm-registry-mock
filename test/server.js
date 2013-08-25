@@ -45,6 +45,16 @@ describe("registry mocking - RegistryClient", function () {
       })
     })
   })
+  it("responds to latest", function (done) {
+    mr(port, function (s) {
+      var client = new RC(conf)
+      client.get("/underscore/latest", function (er, data, raw, res) {
+        assert.equal(data._id, "underscore@1.5.1")
+        s.close()
+        done(er)
+      })
+    })
+  })
 })
 
 describe("registry mocking - npm.install", function () {
