@@ -8,7 +8,7 @@
 
 Currently mocked packages are:
 
-`underscore` at 1.3.1 and 1.5.1 while version 1.5.1 is the latest in this mocked registry.
+`underscore` at 1.3.1, 1.3.3 and 1.5.1 while version 1.5.1 is the latest in this mocked registry.
 
 `request` at 0.9.0, 0.9.5 and 2.27.0 while version 2.27.0 is the latest in this mocked registry.
 
