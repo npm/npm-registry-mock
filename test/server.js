@@ -144,3 +144,16 @@ describe("injecting functions", function () {
     })
   })
 })
+
+describe("api", function () {
+  it("allow options object with port but no mocks", function (done) {
+    mr({port: 1331}, function (s) {
+      var client = new RC(conf)
+      client.get("/underscore/latest", function (er, data, raw, res) {
+        assert.equal(data._id, "underscore@1.5.1")
+        s.close()
+        done(er)
+      })
+    })
+  })
+})

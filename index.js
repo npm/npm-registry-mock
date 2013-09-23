@@ -11,7 +11,7 @@ function start (port, cb) {
     port = 1331
   }
   if (typeof port == "object") {
-    mocks = port.mocks
+    mocks = port.mocks || mocks
     port = port.port || 1331
   }
   hock.createHock(port, function(err, hockServer) {
