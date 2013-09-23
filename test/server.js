@@ -118,3 +118,29 @@ describe("replacing the predefined mocks with custom ones", function () {
     })
   })
 })
+
+describe("injecting functions", function () {
+  it("handles plugins", function (done) {
+    function plugin (s) {
+      s.get("/test").reply(500, {"foo": "true"})
+      s.get("/test").reply(500, {"foo": "true"})
+      s.get("/test").reply(200, {"lala": "true"})
+    }
+    mr({port: 1331, mocks: plugin}, function (s) {
+      request(address + "/test", function (er, res) {
+        assert.deepEqual(res.body, JSON.stringify({foo: "true"}))
+        assert.equal(res.statusCode, 500)
+        request(address + "/test", function (er, res) {
+          assert.deepEqual(res.body, JSON.stringify({foo: "true"}))
+          assert.equal(res.statusCode, 500)
+          request(address + "/test", function (er, res) {
+            assert.deepEqual(res.body, JSON.stringify({lala: "true"}))
+            assert.equal(res.statusCode, 200)
+            s.close()
+            done()
+          })
+        })
+      })
+    })
+  })
+})
