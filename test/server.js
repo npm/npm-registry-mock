@@ -117,6 +117,22 @@ describe("replacing the predefined mocks with custom ones", function () {
       })
     })
   })
+  it("serves js-files", function (done) {
+    var customMocks = {
+      "get": {
+        "/foo.js": [200, __dirname + "/fixtures/index.js"]
+      }
+    }
+
+    var file = fs.readFileSync(__dirname + "/fixtures/index.js", "utf8")
+    mr({port: 1331, mocks: customMocks}, function (s) {
+      request(address + "/foo.js", function (er, res) {
+        assert.equal(res.body, file)
+        s.close()
+        done()
+      })
+    })
+  })
 })
 
 describe("injecting functions", function () {

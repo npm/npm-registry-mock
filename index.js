@@ -22,7 +22,7 @@ function start (port, cb) {
         for (var route in mocks[method]) {
           var status = mocks[method][route][0]
           var customTarget = mocks[method][route][1]
-          var isTarball = /.tgz$/.test(route)
+          var isTarball = /(.tgz|.js)$/.test(route)
           if (isTarball) {
             var target = __dirname + path.sep + "fixtures" + route.replace(/\//g, path.sep);
             if (customTarget && typeof customTarget == 'string')
