@@ -51,6 +51,4 @@ mr({port: 1331, mocks: customMocks}, function (s) {
 
 ##Todo
 
- - extending the routes with the custom ones, no complete overrides
-
  - add more use-cases
