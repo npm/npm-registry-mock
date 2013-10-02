@@ -1,11 +1,13 @@
 var path = require('path')
 
 var hock = require("hock")
+var extend = require("util-extend")
+
 var predefinedMocks = require("./lib/predefines.js").predefinedMocks
 
 module.exports = start
 function start (port, cb) {
-  var mocks = predefinedMocks
+  var mocks = {}
   if (typeof port == "function") {
     cb = port
     port = 1331
@@ -18,6 +20,7 @@ function start (port, cb) {
     if (typeof mocks == "function") {
       mocks(hockServer)
     } else {
+      mocks = extendRoutes(mocks || {})
       for (var method in mocks) {
         for (var route in mocks[method]) {
           var status = mocks[method][route][0]
@@ -48,4 +51,12 @@ function start (port, cb) {
     }
     cb && cb(hockServer)
   })
+}
+
+function extendRoutes(mocks) {
+  for (var method in mocks) {
+    predefinedMocks[method] = extend(predefinedMocks[method], mocks[method])
+
+  }
+  return predefinedMocks
 }

@@ -88,7 +88,7 @@ describe("registry mocking - npm.install", function () {
   })
 })
 
-describe("replacing the predefined mocks with custom ones", function () {
+describe("extending the predefined mocks with custom ones", function () {
   it("handles new mocks", function (done) {
     var customMocks = {
       "get": {
@@ -133,6 +133,47 @@ describe("replacing the predefined mocks with custom ones", function () {
       })
     })
   })
+  it("extends the custom mocks instead of overwriting", function (done) {
+    var customMocks = {
+      "get": {
+        "/foo.js": [200, __dirname + "/fixtures/index.js"]
+      }
+    }
+
+    var file = fs.readFileSync(__dirname + "/fixtures/index.js", "utf8")
+    mr({port: 1331, mocks: customMocks}, function (s) {
+      request(address + "/foo.js", function (er, res) {
+        assert.equal(res.body, file)
+        var client = new RC(conf)
+        client.get("/underscore/latest", function (er, data, raw, res) {
+          assert.equal(data._id, "underscore@1.5.1")
+          s.close()
+          done(er)
+        })
+      })
+    })
+  })
+  it("overwrites the predefined routes, if custom one given", function (done) {
+    var customMocks = {
+      "get": {
+        "/foo.js": [200, __dirname + "/fixtures/index.js"],
+        "/underscore/1.3.1": [200, __dirname + "/fixtures/async/0.1.0"],
+      }
+    }
+
+    var file = fs.readFileSync(__dirname + "/fixtures/index.js", "utf8")
+    mr({port: 1331, mocks: customMocks}, function (s) {
+      request(address + "/foo.js", function (er, res) {
+        assert.equal(res.body, file)
+        var client = new RC(conf)
+        client.get("/underscore/1.3.1", function (er, data, raw, res) {
+          assert.equal(data._id, "async@0.1.0")
+          s.close()
+          done(er)
+        })
+      })
+    })
+  })
 })
 
 describe("injecting functions", function () {
@@ -162,7 +203,7 @@ describe("injecting functions", function () {
 })
 
 describe("api", function () {
-  it("allow options object with port but no mocks", function (done) {
+  it("allows an options object with port but no mocks given", function (done) {
     mr({port: 1331}, function (s) {
       var client = new RC(conf)
       client.get("/underscore/latest", function (er, data, raw, res) {
