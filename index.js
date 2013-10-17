@@ -1,4 +1,5 @@
-var path = require('path')
+var path = require("path")
+var fs = require("fs")
 
 var hock = require("hock")
 var extend = require("util-extend")
@@ -16,38 +17,46 @@ function start (port, cb) {
     mocks = port.mocks || mocks
     port = port.port || 1331
   }
-  hock.createHock(port, function(err, hockServer) {
+  hock.createHock(port, function (err, hockServer) {
     if (typeof mocks == "function") {
       mocks(hockServer)
     } else {
       mocks = extendRoutes(mocks || {})
-      for (var method in mocks) {
-        for (var route in mocks[method]) {
+      Object.keys(mocks).forEach(function (method) {
+        Object.keys(mocks[method]).forEach(function (route) {
           var status = mocks[method][route][0]
           var customTarget = mocks[method][route][1]
-          var isTarball = /(.tgz|.js)$/.test(route)
-          if (isTarball) {
-            var target = __dirname + path.sep + "fixtures" + route.replace(/\//g, path.sep);
-            if (customTarget && typeof customTarget == 'string')
-              target = customTarget
+          var target
 
-            hockServer[method](route).replyWithFile(status, target);
-          } else {
+          if (customTarget && typeof customTarget === "string")
+            target = customTarget
+          else
+            target = __dirname + path.sep + "fixtures" + route.replace(/\//g, path.sep)
+          fs.lstat(target, function (err, stats) {
+            if (err) return next()
+            if (stats.isDirectory()) return next()
+            return hockServer[method](route).replyWithFile(status, target)
+          })
+
+          function next() {
+            var res
             if (!customTarget) {
-              var res = require(__dirname + path.sep + "fixtures" + route.replace(/\//g, path.sep))
+              res = require(__dirname + path.sep + "fixtures" + route.replace(/\//g, path.sep))
               res = JSON.stringify(res).replace(/http:\/\/registry\.npmjs\.org/ig, 'http://localhost:' + port)
+
+              return hockServer[method](route).reply(status, res)
             }
-            else {
-              try {
-                var res = require(customTarget)
-              } catch (e) {
-                var res = customTarget
-              }
+
+            try {
+              res = require(customTarget)
+            } catch (e) {
+              res = customTarget
             }
             hockServer[method](route).reply(status, res)
           }
-        }
-      }
+        })
+      })
+
     }
     cb && cb(hockServer)
   })

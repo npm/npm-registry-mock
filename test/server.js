@@ -153,6 +153,22 @@ describe("extending the predefined mocks with custom ones", function () {
       })
     })
   })
+  it("can hande custom data for js files", function (done) {
+    var customMocks = {
+      "get": {
+        "/package.js": [200, {"ente" : true}],
+        "/shrinkwrap.js": [200, {"ente" : true}]
+      }
+    }
+
+    mr({port: 1331, mocks: customMocks}, function (s) {
+      request(address + "/package.js", function (er, res) {
+        assert.equal(res.body, JSON.stringify({"ente" : true}))
+        s.close()
+        done()
+      })
+    })
+  })
   it("overwrites the predefined routes, if custom one given", function (done) {
     var customMocks = {
       "get": {
