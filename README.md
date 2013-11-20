@@ -12,6 +12,7 @@ Currently mocked packages are:
 
 `request` at 0.9.0, 0.9.5 and 2.27.0 while version 2.27.0 is the latest in this mocked registry.
 
+`test-package-with-one-dep` at 0.0.0, version 0.0.0 is the latest in this mocked registry. It has a mocked dependency: `test-package@0.0.0`
 
 Installing underscore 1.3.1:
 

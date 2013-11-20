@@ -86,6 +86,19 @@ describe("registry mocking - npm.install", function () {
       })
     })
   })
+  it("i have a test package with one dependency", function (done) {
+    mr(port, function (s) {
+      npm.load({registry: address}, function () {
+        npm.commands.install(tempdir, "test-package-with-one-dep", function (err) {
+          var exists = fs.existsSync(tempdir + "/node_modules/test-package-with-one-dep/" +
+            "node_modules/test-package/package.json")
+          assert.ok(exists)
+          s.close()
+          done()
+        })
+      })
+    })
+  })
 })
 
 describe("extending the predefined mocks with custom ones", function () {
