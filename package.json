@@ -1,6 +1,6 @@
 {
   "name": "npm-registry-mock",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "mock the npm registry",
   "main": "index.js",
   "scripts": {
