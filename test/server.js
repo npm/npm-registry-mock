@@ -14,6 +14,8 @@ var fs = require("fs")
 // test-settings
 var tempdir = __dirname + "/out"
 
+var path = require('path')
+
 // config
 var port = 1331
 var address = "http://localhost:" + port
@@ -239,6 +241,29 @@ describe("api", function () {
         assert.equal(data._id, "underscore@1.5.1")
         s.close()
         done(er)
+      })
+    })
+  })
+})
+
+
+describe('invalid version', function() {
+  var pkgs = fs.readdirSync(path.join(__dirname, '..', 'fixtures'))
+                .filter(function(fp) {
+                  return !/.json/.test(fp)
+                })
+  pkgs.forEach(function(pkg) {
+    describe(pkg, function() {
+      it('should return an error message saying version not found',
+        function(done) {
+        mr({port: 1331}, function(s) {
+          var client = new RC(conf)
+          client.get('/'+pkg+'/1.7.50', function(er, data, raw, res) {
+            assert.equal(data.error, 'version not found')
+            s.close()
+            done()
+          })
+        })
       })
     })
   })

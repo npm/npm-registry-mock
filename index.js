@@ -22,6 +22,17 @@ function start (port, cb) {
       mocks(hockServer)
     } else {
       mocks = extendRoutes(mocks || {})
+      hockServer
+        .filteringPath(function(p) {
+          if (!mocks.get.hasOwnProperty(p)) {
+            var splits = p.split('/').filter(function(part) {
+              return part !== ''
+            })
+            var name = splits[0]
+            return '/missing'
+          }
+          return p
+        })
       Object.keys(mocks).forEach(function (method) {
         Object.keys(mocks[method]).forEach(function (route) {
           var status = mocks[method][route][0]
