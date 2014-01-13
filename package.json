@@ -7,7 +7,7 @@
     "test": "mocha -R spec"
   },
   "dependencies": {
-    "hock": "~0.2.2",
+    "hock": "~0.2.3",
     "util-extend": "~1.0.1"
   },
   "devDependencies": {
