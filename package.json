@@ -20,12 +20,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:robertkowalski/npm-registry-mock.git"
+    "url": "git://github.com/npm/npm-registry-mock.git"
   },
   "author": "Robert Kowalski <rok@kowalski.gd>",
   "license": "BSD",
   "bugs": {
-    "url": "https://github.com/robertkowalski/npm-registry-mock/issues"
+    "url": "https://github.com/npm/npm-registry-mock/issues"
   },
   "keywords": [
     "npm",
