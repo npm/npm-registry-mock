@@ -3,8 +3,7 @@
 
 #npm-registry-mock
 
-
-##Usage
+##Mocked Packages
 
 Currently mocked packages are:
 
@@ -12,7 +11,11 @@ Currently mocked packages are:
 
 `request` at 0.9.0, 0.9.5 and 2.27.0 while version 2.27.0 is the latest in this mocked registry.
 
-`test-package-with-one-dep` at 0.0.0, version 0.0.0 is the latest in this mocked registry. It has a mocked dependency: `test-package@0.0.0`
+`test-package-with-one-dep` at 0.0.0, with mocked dependency `test-package@0.0.0`.
+
+`npm-test-peer-deps` at 0.0.0, with a peer dependency on `request@0.9.x` and a dependency on `underscore@1.3.1`.
+
+##Usage
 
 Installing underscore 1.3.1:
 
@@ -49,6 +52,16 @@ mr({port: 1331, mocks: customMocks}, function (s) {
   })
 })
 ```
+
+##Adding a new fixture
+
+Although ideally we stick with the packages already mocked when writing new tests, in some cases it can be necessary to recreate a certain pathological or unusual scenario in the mock registry. In that case you can run
+
+```sh
+$ ./add-fixture.sh my-weird-package@1.2.3
+```
+
+to add that package to the fixtures directory.
 
 ##Todo
 
