@@ -58,7 +58,7 @@ mr({port: 1331, mocks: customMocks}, function (s) {
 Although ideally we stick with the packages already mocked when writing new tests, in some cases it can be necessary to recreate a certain pathological or unusual scenario in the mock registry. In that case you can run
 
 ```sh
-$ ./add-fixture.sh my-weird-package@1.2.3
+$ ./add-fixture.sh my-weird-package 1.2.3
 ```
 
 to add that package to the fixtures directory.
