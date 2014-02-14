@@ -268,3 +268,41 @@ describe('invalid version', function() {
     })
   })
 })
+
+describe('multiple requests', function () {
+  it('will error after the first request, if specified', function (done) {
+    mr({
+      port: 1331,
+      minReq: 1,
+      maxReq: 1,
+      throwOnUnmatched: false
+    },
+    function (s) {
+      var client = new RC(conf)
+      request(address + '/underscore/latest', function (er, res) {
+        request(address + '/underscore/latest', function (er, res) {
+          assert.equal(res.body, 'No Matching Response!\n')
+          s.close()
+          done()
+        })
+      })
+    })
+  })
+  it('will not error after the first request, if nothing is specified', function (done) {
+    mr({
+      port: 1331
+    }, function (s) {
+      var client = new RC(conf)
+      client.get('/underscore/latest', function (er, data, raw, res) {
+        assert.equal(er, null)
+        client.get('/underscore/latest', function (er, data, raw, res) {
+          assert.equal(er, null)
+          client.get('/underscore/latest', function (er, data, raw, res) {
+            s.close()
+            done(er)
+          })
+        })
+      })
+    })
+  })
+})
