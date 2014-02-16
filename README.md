@@ -15,6 +15,12 @@ Currently mocked packages are:
 
 `npm-test-peer-deps` at 0.0.0, with a peer dependency on `request@0.9.x` and a dependency on `underscore@1.3.1`.
 
+`test-repo-url-http` at 0.0.0
+
+`test-repo-url-https` at 0.0.1
+
+`test-repo-url-ssh` at 0.0.1
+
 ##Usage
 
 Installing underscore 1.3.1:
