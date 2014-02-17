@@ -21,6 +21,8 @@ Currently mocked packages are:
 
 `test-repo-url-ssh` at 0.0.1
 
+`mkdirp` at 0.3.5
+
 ##Usage
 
 Installing underscore 1.3.1:
