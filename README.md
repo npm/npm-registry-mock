@@ -61,6 +61,17 @@ mr({port: 1331, mocks: customMocks}, function (s) {
 })
 ```
 
+Many requests for one route:
+
+```javascript
+mr({
+    port: 1331,
+    minReq: 1,
+    maxReq: 5
+  }, function (s) {
+
+```
+
 ##Adding a new fixture
 
 Although ideally we stick with the packages already mocked when writing new tests, in some cases it can be necessary to recreate a certain pathological or unusual scenario in the mock registry. In that case you can run

@@ -8,15 +8,28 @@ var predefinedMocks = require("./lib/predefines.js").predefinedMocks
 
 module.exports = start
 function start (port, cb) {
-  var mocks = {}
+  var minMax = {
+        max: Infinity,
+        min: 0
+      },
+      mocks = {}
+
   if (typeof port == "function") {
     cb = port
     port = 1331
   }
   if (typeof port == "object") {
     mocks = port.mocks || mocks
-    port = port.port || 1331
+
+    if (port.minReq && port.maxReq) {
+      minMax.max = port.maxReq
+      minMax.min = port.minReq
+    }
+
+    port.port = port.port || 1331
+    port.throwOnUnmatched = port.throwOnUnmatched === false ? false : true
   }
+
   hock.createHock(port, function (err, hockServer) {
     if (typeof mocks == "function") {
       mocks(hockServer)
@@ -46,16 +59,17 @@ function start (port, cb) {
           fs.lstat(target, function (err, stats) {
             if (err) return next()
             if (stats.isDirectory()) return next()
-            return hockServer[method](route).replyWithFile(status, target)
+            return hockServer[method](route).many(minMax).replyWithFile(status, target)
           })
 
           function next() {
             var res
             if (!customTarget) {
               res = require(__dirname + path.sep + "fixtures" + route.replace(/\//g, path.sep))
-              res = JSON.stringify(res).replace(/http:\/\/registry\.npmjs\.org/ig, 'http://localhost:' + port)
+              res = JSON.stringify(res).replace(/http:\/\/registry\.npmjs\.org/ig,
+                'http://localhost:' + port)
 
-              return hockServer[method](route).reply(status, res)
+              return hockServer[method](route).many(minMax).reply(status, res)
             }
 
             try {
@@ -63,7 +77,7 @@ function start (port, cb) {
             } catch (e) {
               res = customTarget
             }
-            hockServer[method](route).reply(status, res)
+            hockServer[method](route).many(minMax).reply(status, res)
           }
         })
       })
