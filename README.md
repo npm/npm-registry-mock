@@ -23,6 +23,10 @@ Currently mocked packages are:
 
 `mkdirp` at 0.3.5
 
+`optimist` at 0.6.0
+
+`clean` at 2.1.6 
+
 ##Usage
 
 Installing underscore 1.3.1:
