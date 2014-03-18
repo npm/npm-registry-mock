@@ -101,6 +101,19 @@ describe("registry mocking - npm.install", function () {
       })
     })
   })
+  it("works with a passed object", function (done) {
+    mr({port: port}, function (s) {
+      npm.load({cache: tempdir, registry: address}, function () {
+        npm.commands.install(tempdir, "underscore@1.3.1", function (err) {
+          require.cache[path] = null
+          var version = require(path).version
+          assert.equal(version, "1.3.1")
+          s.close()
+          done()
+        })
+      })
+    })
+  })
 })
 
 describe("extending the predefined mocks with custom ones", function () {

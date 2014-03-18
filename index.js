@@ -14,9 +14,14 @@ function start (port, cb) {
       },
       mocks = {}
 
+  if (typeof port == "number") {
+    port = {port: port}
+  }
+
   if (typeof port == "function") {
     cb = port
-    port = 1331
+    port = {}
+    port.port = 1331
   }
   if (typeof port == "object") {
     mocks = port.mocks || mocks
@@ -67,7 +72,7 @@ function start (port, cb) {
             if (!customTarget) {
               res = require(__dirname + path.sep + "fixtures" + route.replace(/\//g, path.sep))
               res = JSON.stringify(res).replace(/http:\/\/registry\.npmjs\.org/ig,
-                'http://localhost:' + port)
+                'http://localhost:' + port.port)
 
               return hockServer[method](route).many(minMax).reply(status, res)
             }
