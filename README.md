@@ -27,7 +27,7 @@ Currently mocked packages are:
 
 `clean` at 2.1.6
 
-`async` at 0.2.9, 0..2.10
+`async` at 0.2.9, 0.2.10
 
 `checker` at 0.5.1, 0.5.2
 
