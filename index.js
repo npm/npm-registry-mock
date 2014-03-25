@@ -7,30 +7,36 @@ var extend = require("util-extend")
 var predefinedMocks = require("./lib/predefines.js").predefinedMocks
 
 module.exports = start
-function start (port, cb) {
+function start (options, cb) {
   var minMax = {
         max: Infinity,
         min: 0
       },
-      mocks = {}
+      mocks = {},
+      options
 
-  if (typeof port == "function") {
-    cb = port
-    port = 1331
+  if (typeof options == "number") {
+    options = {port: options}
   }
-  if (typeof port == "object") {
-    mocks = port.mocks || mocks
 
-    if (port.minReq && port.maxReq) {
-      minMax.max = port.maxReq
-      minMax.min = port.minReq
+  if (typeof options == "function") {
+    cb = options
+    options = {}
+    options.port = 1331
+  }
+  if (typeof options == "object") {
+    mocks = options.mocks || mocks
+
+    if (options.minReq && options.maxReq) {
+      minMax.max = options.maxReq
+      minMax.min = options.minReq
     }
 
-    port.port = port.port || 1331
-    port.throwOnUnmatched = port.throwOnUnmatched === false ? false : true
+    options.port = options.port || 1331
+    options.throwOnUnmatched = options.throwOnUnmatched === false ? false : true
   }
 
-  hock.createHock(port, function (err, hockServer) {
+  hock.createHock(options, function (err, hockServer) {
     if (typeof mocks == "function") {
       mocks(hockServer)
     } else {
@@ -67,7 +73,7 @@ function start (port, cb) {
             if (!customTarget) {
               res = require(__dirname + path.sep + "fixtures" + route.replace(/\//g, path.sep))
               res = JSON.stringify(res).replace(/http:\/\/registry\.npmjs\.org/ig,
-                'http://localhost:' + port)
+                'http://localhost:' + options.port)
 
               return hockServer[method](route).many(minMax).reply(status, res)
             }
