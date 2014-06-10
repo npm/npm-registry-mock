@@ -63,7 +63,7 @@ describe("registry mocking - npm.install", function () {
   var path = tempdir + "/node_modules/underscore/package.json"
 
   it("sends the module as tarball (version specified)", function (done) {
-    mr(port, function (s) {
+    mr({port: port}, function (s) {
       npm.load({cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, "underscore@1.3.1", function (err) {
           require.cache[path] = null
@@ -76,7 +76,7 @@ describe("registry mocking - npm.install", function () {
     })
   })
   it("sends the module as tarball (no version specified -- latest)", function (done) {
-    mr(port, function (s) {
+    mr({port: port}, function (s) {
       npm.load({cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, "underscore", function (err) {
           require.cache[path] = null
@@ -89,25 +89,12 @@ describe("registry mocking - npm.install", function () {
     })
   })
   it("i have a test package with one dependency", function (done) {
-    mr(port, function (s) {
+    mr({port: port}, function (s) {
       npm.load({cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, "test-package-with-one-dep", function (err) {
           var exists = fs.existsSync(tempdir + "/node_modules/test-package-with-one-dep/" +
             "node_modules/test-package/package.json")
           assert.ok(exists)
-          s.close()
-          done()
-        })
-      })
-    })
-  })
-  it("works with a passed object", function (done) {
-    mr({port: port}, function (s) {
-      npm.load({cache: tempdir, registry: address}, function () {
-        npm.commands.install(tempdir, "underscore@1.3.1", function (err) {
-          require.cache[path] = null
-          var version = require(path).version
-          assert.equal(version, "1.3.1")
           s.close()
           done()
         })
@@ -227,7 +214,7 @@ describe("injecting functions", function () {
       s.get("/test").reply(500, {"foo": "true"})
       s.get("/test").reply(200, {"lala": "true"})
     }
-    mr({port: port, mocks: plugin}, function (s) {
+    mr({port: port, plugin: plugin}, function (s) {
       request(address + "/test", function (er, res) {
         assert.deepEqual(res.body, JSON.stringify({foo: "true"}))
         assert.equal(res.statusCode, 500)
@@ -241,6 +228,21 @@ describe("injecting functions", function () {
             done()
           })
         })
+      })
+    })
+  })
+  it("default routes still work", function (done) {
+    function plugin (s) {
+      s.get("/test").reply(500, {"foo": "true"})
+      s.get("/test").reply(500, {"foo": "true"})
+      s.get("/test").reply(200, {"lala": "true"})
+    }
+    mr({port: port, plugin: plugin}, function (s) {
+      var client = new RC(conf)
+      client.get("/underscore/latest", function (er, data, raw, res) {
+        assert.equal(data._id, "underscore@1.5.1")
+        s.close()
+        done(er)
       })
     })
   })
@@ -287,8 +289,7 @@ describe('multiple requests', function () {
     mr({
       port: port,
       minReq: 1,
-      maxReq: 1,
-      throwOnUnmatched: false
+      maxReq: 1
     },
     function (s) {
       var client = new RC(conf)
