@@ -17,10 +17,11 @@ function start (options, cb) {
 
   hock.createHock(options, function (err, hockServer) {
     mocks = extendRoutes(mocks)
+    plugin(hockServer)
 
     hockServer
       .filteringPath(function (p) {
-        if (!mocks.get.hasOwnProperty(p)) {
+        if (!hockServer.hasRoute("GET", p)) {
           var splits = p.split('/').filter(function (part) {
             return part !== ''
           })
@@ -29,8 +30,6 @@ function start (options, cb) {
         }
         return p
       })
-
-    plugin(hockServer)
 
     Object.keys(mocks).forEach(function (method) {
       Object.keys(mocks[method]).forEach(function (route) {

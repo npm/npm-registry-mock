@@ -285,7 +285,7 @@ describe('invalid version', function() {
 })
 
 describe('multiple requests', function () {
-  it('will error after the first request, if specified', function (done) {
+  it('will return missing after the first request, if specified', function (done) {
     mr({
       port: port,
       minReq: 1,
@@ -295,7 +295,7 @@ describe('multiple requests', function () {
       var client = new RC(conf)
       request(address + '/underscore/latest', function (er, res) {
         request(address + '/underscore/latest', function (er, res) {
-          assert.equal(res.body, 'No Matching Response!\n')
+          assert.equal(res.body, '{"error":"version not found"}')
           s.close()
           done()
         })
