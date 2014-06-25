@@ -138,6 +138,25 @@ describe("extending the predefined mocks with custom ones", function () {
       })
     })
   })
+  it("uses the fake registry (GH-22)", function (done) {
+      var customMocks = {
+        "get": {
+          "/async/-/async-0.1.0.tgz": [200, __dirname + "/fixtures/async/-/async-0.1.0.tgz"],
+          "/async/0.1.0": [200, __dirname + "/fixtures/async/0.1.0"],
+        }
+      }
+      mr({port: port, mocks: customMocks}, function (err, s) {
+        if (err) return done(err)
+        var client = new RC(conf)
+        client.get("/async/0.1.0", function (er, data, raw, res) {
+          assert.notEqual(data.dist.tarball,
+            "http://registry.npmjs.org/async/-/async-0.1.0.tgz")
+          assert.ok(/localhost/.test(data.dist.tarball))
+          s.close()
+          done(er)
+        })
+      })
+    })
   it("serves js-files", function (done) {
     var customMocks = {
       "get": {

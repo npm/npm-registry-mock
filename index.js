@@ -49,13 +49,17 @@ function start (options, cb) {
             .replyWithFile(status, target)
         })
 
+        function replaceRegistry (res) {
+          return JSON.stringify(res)
+                  .replace(/http:\/\/registry\.npmjs\.org/ig,
+                          'http://localhost:' + port)
+        }
+
         function next () {
           var res
           if (!customTarget) {
             res = require(__dirname + "/fixtures" + route)
-            res = JSON.stringify(res)
-              .replace(/http:\/\/registry\.npmjs\.org/ig,
-                      'http://localhost:' + port)
+            res = replaceRegistry(res)
 
             return hockServer[method](route)
               .many({max: maxReq, min: minReq})
@@ -67,6 +71,8 @@ function start (options, cb) {
           } catch (e) {
             res = customTarget
           }
+
+          res = replaceRegistry(res)
           hockServer[method](route)
             .many({max: maxReq, min: minReq})
             .reply(status, res)
@@ -80,7 +86,6 @@ function start (options, cb) {
 function extendRoutes (mocks) {
   for (var method in mocks) {
     predefinedMocks[method] = extend(predefinedMocks[method], mocks[method])
-
   }
   return predefinedMocks
 }
