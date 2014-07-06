@@ -38,7 +38,7 @@ afterEach(function (done) {
 
 describe("registry mocking - RegistryClient", function () {
   it("returns the underscore json", function (done) {
-    mr(port, function (s) {
+    mr(port, function (err, s) {
       var client = new RC(conf)
       client.get("/underscore", function (er, data, raw, res) {
         assert.equal(data._id, "underscore")
@@ -48,7 +48,7 @@ describe("registry mocking - RegistryClient", function () {
     })
   })
   it("responds to latest", function (done) {
-    mr(port, function (s) {
+    mr(port, function (err, s) {
       var client = new RC(conf)
       client.get("/underscore/latest", function (er, data, raw, res) {
         assert.equal(data._id, "underscore@1.5.1")
@@ -63,7 +63,7 @@ describe("registry mocking - npm.install", function () {
   var path = tempdir + "/node_modules/underscore/package.json"
 
   it("sends the module as tarball (version specified)", function (done) {
-    mr({port: port}, function (s) {
+    mr({port: port}, function (err, s) {
       npm.load({cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, "underscore@1.3.1", function (err) {
           require.cache[path] = null
@@ -76,7 +76,7 @@ describe("registry mocking - npm.install", function () {
     })
   })
   it("sends the module as tarball (no version specified -- latest)", function (done) {
-    mr({port: port}, function (s) {
+    mr({port: port}, function (err, s) {
       npm.load({cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, "underscore", function (err) {
           require.cache[path] = null
@@ -89,7 +89,7 @@ describe("registry mocking - npm.install", function () {
     })
   })
   it("i have a test package with one dependency", function (done) {
-    mr({port: port}, function (s) {
+    mr({port: port}, function (err, s) {
       npm.load({cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, "test-package-with-one-dep", function (err) {
           var exists = fs.existsSync(tempdir + "/node_modules/test-package-with-one-dep/" +
@@ -113,7 +113,7 @@ describe("extending the predefined mocks with custom ones", function () {
         "/async/0.1.0": [200, __dirname + "/fixtures/async/0.1.0"],
       }
     }
-    mr({port: port, mocks: customMocks}, function (s) {
+    mr({port: port, mocks: customMocks}, function (err, s) {
       request(address + "/ente200", function (er, res) {
         assert.deepEqual(res.body, JSON.stringify({ente200: "true"}))
         assert.equal(res.statusCode, 200)
@@ -140,7 +140,7 @@ describe("extending the predefined mocks with custom ones", function () {
     }
 
     var file = fs.readFileSync(__dirname + "/fixtures/index.js", "utf8")
-    mr({port: port, mocks: customMocks}, function (s) {
+    mr({port: port, mocks: customMocks}, function (err, s) {
       request(address + "/foo.js", function (er, res) {
         assert.equal(res.body, file)
         s.close()
@@ -156,7 +156,7 @@ describe("extending the predefined mocks with custom ones", function () {
     }
 
     var file = fs.readFileSync(__dirname + "/fixtures/index.js", "utf8")
-    mr({port: port, mocks: customMocks}, function (s) {
+    mr({port: port, mocks: customMocks}, function (err, s) {
       request(address + "/foo.js", function (er, res) {
         assert.equal(res.body, file)
         var client = new RC(conf)
@@ -176,7 +176,7 @@ describe("extending the predefined mocks with custom ones", function () {
       }
     }
 
-    mr({port: port, mocks: customMocks}, function (s) {
+    mr({port: port, mocks: customMocks}, function (err, s) {
       request(address + "/package.js", function (er, res) {
         assert.equal(res.body, JSON.stringify({"ente" : true}))
         s.close()
@@ -193,7 +193,7 @@ describe("extending the predefined mocks with custom ones", function () {
     }
 
     var file = fs.readFileSync(__dirname + "/fixtures/index.js", "utf8")
-    mr({port: port, mocks: customMocks}, function (s) {
+    mr({port: port, mocks: customMocks}, function (err, s) {
       request(address + "/foo.js", function (er, res) {
         assert.equal(res.body, file)
         var client = new RC(conf)
@@ -214,7 +214,7 @@ describe("injecting functions", function () {
       s.get("/test").reply(500, {"foo": "true"})
       s.get("/test").reply(200, {"lala": "true"})
     }
-    mr({port: port, plugin: plugin}, function (s) {
+    mr({port: port, plugin: plugin}, function (err, s) {
       request(address + "/test", function (er, res) {
         assert.deepEqual(res.body, JSON.stringify({foo: "true"}))
         assert.equal(res.statusCode, 500)
@@ -237,7 +237,7 @@ describe("injecting functions", function () {
       s.get("/test").reply(500, {"foo": "true"})
       s.get("/test").reply(200, {"lala": "true"})
     }
-    mr({port: port, plugin: plugin}, function (s) {
+    mr({port: port, plugin: plugin}, function (err, s) {
       var client = new RC(conf)
       client.get("/underscore/latest", function (er, data, raw, res) {
         assert.equal(data._id, "underscore@1.5.1")
@@ -250,7 +250,7 @@ describe("injecting functions", function () {
 
 describe("api", function () {
   it("allows an options object with port but no mocks given", function (done) {
-    mr({port: port}, function (s) {
+    mr({port: port}, function (err, s) {
       var client = new RC(conf)
       client.get("/underscore/latest", function (er, data, raw, res) {
         assert.equal(data._id, "underscore@1.5.1")
@@ -271,7 +271,7 @@ describe('invalid version', function() {
     describe(pkg, function() {
       it('should return an error message saying version not found',
         function(done) {
-        mr({port: port}, function(s) {
+        mr({port: port}, function(err, s) {
           var client = new RC(conf)
           client.get('/'+pkg+'/1.7.50', function(er, data, raw, res) {
             assert.equal(data.error, 'version not found')
@@ -291,7 +291,7 @@ describe('multiple requests', function () {
       minReq: 1,
       maxReq: 1
     },
-    function (s) {
+    function (err, s) {
       var client = new RC(conf)
       request(address + '/underscore/latest', function (er, res) {
         request(address + '/underscore/latest', function (er, res) {
@@ -305,7 +305,7 @@ describe('multiple requests', function () {
   it('will not error after the first request, if nothing is specified', function (done) {
     mr({
       port: port
-    }, function (s) {
+    }, function (err, s) {
       var client = new RC(conf)
       client.get('/underscore/latest', function (er, data, raw, res) {
         assert.equal(er, null)
