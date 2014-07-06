@@ -73,7 +73,7 @@ function start (options, cb) {
         }
       })
     })
-    cb && cb(hockServer)
+    cb && cb(null, hockServer)
   })
 }
 
