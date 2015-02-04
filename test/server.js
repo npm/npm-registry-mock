@@ -294,49 +294,7 @@ describe("api", function () {
   })
 })
 
-
-describe('invalid version', function() {
-  var pkgs = fs.readdirSync(path.join(__dirname, '..', 'fixtures'))
-                .filter(function(fp) {
-                  return !/.json/.test(fp)
-                })
-  pkgs.forEach(function(pkg) {
-    describe(pkg, function() {
-      it('should return an error message saying version not found',
-        function(done) {
-        mr({port: port}, function (err, s) {
-          if (err) return done(err)
-          var client = new RC(conf)
-          client.get('/'+pkg+'/1.7.50', function(er, data, raw, res) {
-            assert.equal(data.error, 'version not found')
-            s.close()
-            done()
-          })
-        })
-      })
-    })
-  })
-})
-
 describe('multiple requests', function () {
-  it('will return missing after the first request, if specified', function (done) {
-    mr({
-      port: port,
-      minReq: 1,
-      maxReq: 1
-    },
-    function (err, s) {
-      if (err) return done(err)
-      var client = new RC(conf)
-      request(address + '/underscore/latest', function (er, res) {
-        request(address + '/underscore/latest', function (er, res) {
-          assert.equal(res.body, '{"error":"version not found"}')
-          s.close()
-          done()
-        })
-      })
-    })
-  })
   it('will not error after the first request, if nothing is specified', function (done) {
     mr({
       port: port

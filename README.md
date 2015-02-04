@@ -38,7 +38,7 @@ Installing underscore 1.3.1:
 ```javascript
 var mr = require("npm-registry-mock")
 
-mr({port: 1331}}, function (err, s) {
+mr({port: 1331}, function (err, s) {
   npm.load({registry: "http://localhost:1331"}, function () {
     npm.commands.install("/tmp", "underscore@1.3.1", function (err) {
       // assert npm behaves right...
@@ -90,9 +90,8 @@ $ ./add-fixture.sh my-weird-package 1.2.3
 
 to add that package to the fixtures directory.
 
-##Breaking Changes for 0.7
+##Breaking Changes for 1.0
  - the callback returns `err, server` now, instead of just server (https://github.com/npm/npm-registry-mock/issues/20)
  - options must be of type `object`
  - a "plugin" is injected via options.plugin, not as a mock being a function
  - a plugin does not override the default routes any more
- - throwOnUnmatched is not working any more

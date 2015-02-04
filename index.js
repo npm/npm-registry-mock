@@ -20,18 +20,6 @@ function start (options, cb) {
     plugin(hockServer)
 
     hockServer.defaultReplyHeaders({ connection: 'close' })
-    hockServer
-      .filteringPath(function (p) {
-        if (!hockServer.hasRoute("GET", p)) {
-          var splits = p.split('/').filter(function (part) {
-            return part !== ''
-          })
-          var name = splits[0]
-          return '/missing'
-        }
-        return p
-      })
-
     Object.keys(mocks).forEach(function (method) {
       Object.keys(mocks[method]).forEach(function (route) {
         var status = mocks[method][route][0]
