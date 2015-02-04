@@ -19,6 +19,7 @@ function start (options, cb) {
     mocks = extendRoutes(mocks)
     plugin(hockServer)
 
+    hockServer.defaultReplyHeaders({ connection: 'close' })
     hockServer
       .filteringPath(function (p) {
         if (!hockServer.hasRoute("GET", p)) {

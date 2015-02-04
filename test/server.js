@@ -121,6 +121,7 @@ describe("extending the predefined mocks with custom ones", function () {
     mr({port: port, mocks: customMocks}, function (err, s) {
       if (err) return done(err)
       request(address + "/ente200", function (er, res) {
+        assert.equal(res.headers.connection, 'close')
         assert.deepEqual(res.body, JSON.stringify({ente200: "true"}))
         assert.equal(res.statusCode, 200)
         request(address + "/ente400", function (er, res) {
