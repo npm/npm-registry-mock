@@ -17,9 +17,12 @@ function start (options, cb) {
 
   hock.createHock(options, function (err, hockServer) {
     mocks = extendRoutes(mocks)
+
+    // default headers must be set before invoking plugins so that
+    // newly-enqueued requests inherit those default headers
+    hockServer.defaultReplyHeaders({ connection: 'close' })
     plugin(hockServer)
 
-    hockServer.defaultReplyHeaders({ connection: 'close' })
     Object.keys(mocks).forEach(function (method) {
       Object.keys(mocks[method]).forEach(function (route) {
         var status = mocks[method][route][0]
