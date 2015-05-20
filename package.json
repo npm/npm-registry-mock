@@ -23,7 +23,7 @@
     "url": "git://github.com/npm/npm-registry-mock.git"
   },
   "author": "Robert Kowalski <rok@kowalski.gd>",
-  "license": "BSD",
+  "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/npm/npm-registry-mock/issues"
   },
