@@ -13,10 +13,10 @@
   "devDependencies": {
     "mkdirp": "^0.5.1",
     "mocha": "~1.12.0",
+    "npm": "1.4.28",
     "npm-registry-client": "0.2.28",
     "request": "~2.22.0",
-    "npm": "1.4.28",
-    "rimraf": "~2.2.0"
+    "rimraf": "^2.5.3"
   },
   "repository": {
     "type": "git",
