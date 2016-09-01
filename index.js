@@ -1,5 +1,6 @@
 var path = require("path")
 var fs = require("fs")
+var http = require("http")
 
 var hock = require("hock")
 var extend = require("util-extend")
@@ -15,13 +16,14 @@ function start (options, cb) {
   var mocks = options.mocks === undefined ? {} : options.mocks
   var plugin = options.plugin === undefined ? function () {} : options.plugin
 
-  hock.createHock(options, function (err, hockServer) {
+  var mock = hock.createHock(options)
+  http.createServer(mock.handler).listen(port, function (err) {
     mocks = extendRoutes(mocks)
 
     // default headers must be set before invoking plugins so that
     // newly-enqueued requests inherit those default headers
-    hockServer.defaultReplyHeaders({ connection: 'close' })
-    plugin(hockServer)
+    mock.defaultReplyHeaders({ connection: 'close' })
+    plugin(mock)
 
     Object.keys(mocks).forEach(function (method) {
       Object.keys(mocks[method]).forEach(function (route) {
@@ -36,7 +38,7 @@ function start (options, cb) {
         fs.lstat(target, function (err, stats) {
           if (err) return next()
           if (stats.isDirectory()) return next()
-          return hockServer[method](route)
+          return mock[method](route)
             .many({max: maxReq, min: minReq})
             .replyWithFile(status, target)
         })
@@ -53,7 +55,7 @@ function start (options, cb) {
             res = require(__dirname + "/fixtures" + route)
             res = replaceRegistry(res)
 
-            return hockServer[method](route)
+            return mock[method](route)
               .many({max: maxReq, min: minReq})
               .reply(status, res)
           }
@@ -65,13 +67,13 @@ function start (options, cb) {
           }
 
           res = replaceRegistry(res)
-          hockServer[method](route)
+          mock[method](route)
             .many({max: maxReq, min: minReq})
             .reply(status, res)
         }
       })
     })
-    cb && cb(null, hockServer)
+    cb && cb(null, this)
   })
 }
 
