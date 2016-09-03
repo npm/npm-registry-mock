@@ -1,6 +1,7 @@
 var path = require("path")
 var fs = require("fs")
 var http = require("http")
+var url = require("url")
 
 var hock = require("hock")
 var extend = require("util-extend")
@@ -18,6 +19,8 @@ function start (options, cb) {
 
   var mock = hock.createHock(options)
   http.createServer(mock.handler).listen(port, function (err) {
+    var realUrl = 'http://localhost:' + this.address().port
+
     mocks = extendRoutes(mocks)
 
     // default headers must be set before invoking plugins so that
@@ -45,8 +48,7 @@ function start (options, cb) {
 
         function replaceRegistry (res) {
           return JSON.stringify(res)
-                  .replace(/http:\/\/registry\.npmjs\.org/ig,
-                          'http://localhost:' + port)
+                  .replace(/http:\/\/registry\.npmjs\.org/ig, realUrl)
         }
 
         function next () {
