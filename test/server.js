@@ -152,7 +152,7 @@ describe("extending the predefined mocks with custom ones", function () {
         client.get("/async/0.1.0", function (er, data, raw, res) {
           assert.notEqual(data.dist.tarball,
             "http://registry.npmjs.org/async/-/async-0.1.0.tgz")
-          assert.ok(/localhost/.test(data.dist.tarball))
+          assert.ok(/localhost|\[::\]/.test(data.dist.tarball))
           s.close()
           done(er)
         })
@@ -285,6 +285,21 @@ describe("api", function () {
     mr({port: port}, function (err, s) {
       if (err) return done(err)
       var client = new RC(conf)
+      client.get("/underscore/latest", function (er, data, raw, res) {
+        assert.equal(data._id, "underscore@1.5.1")
+        s.close()
+        done(er)
+      })
+    })
+  })
+
+  it("allows an options object with port = 0 but no mocks given", function (done) {
+    mr({port: 0}, function (err, s) {
+      if (err) return done(err)
+      var client = new RC({
+        cache: conf.cache,
+        registry: "http://localhost:" + s.address().port
+      })
       client.get("/underscore/latest", function (er, data, raw, res) {
         assert.equal(data._id, "underscore@1.5.1")
         s.close()
