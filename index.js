@@ -15,6 +15,7 @@ function start (options, cb) {
   var port = options.port === undefined ? 1331 : options.port
   var mocks = options.mocks === undefined ? {} : options.mocks
   var plugin = options.plugin === undefined ? function () {} : options.plugin
+  if (options.port === 0) options.port = '0' // work around hock 0.x stripping the port arg if false
 
   var hockServer = hock.createHock(options, function (err) {
     hockServer._server.removeListener('error', cb)
