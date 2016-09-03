@@ -12,9 +12,9 @@
   },
   "devDependencies": {
     "mkdirp": "^0.5.1",
-    "mocha": "^2.5.3",
-    "npm": "1.4.28",
-    "npm-registry-client": "^1.0.1",
+    "mocha": "^3.0.2",
+    "npm": "*",
+    "npm-registry-client": "^7.2.1",
     "request": "^2.73.0",
     "rimraf": "^2.5.3"
   },
