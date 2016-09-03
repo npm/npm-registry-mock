@@ -8,3 +8,6 @@ node_js:
 before_install:
   - npm install -g npm@next
 sudo: false
+after_success:
+  - npm install coveralls
+  - nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls
