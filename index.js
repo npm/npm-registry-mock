@@ -15,7 +15,9 @@ function start (options, cb) {
   var mocks = options.mocks === undefined ? {} : options.mocks
   var plugin = options.plugin === undefined ? function () {} : options.plugin
 
-  hock.createHock(options, function (err, hockServer) {
+  var hockServer = hock.createHock(options, function (err) {
+    hockServer._server.removeListener('error', cb)
+    if (err) return cb(err)
     mocks = extendRoutes(mocks)
 
     // default headers must be set before invoking plugins so that
@@ -73,6 +75,7 @@ function start (options, cb) {
     })
     cb && cb(null, hockServer)
   })
+  hockServer._server.once('error', cb)
 }
 
 function extendRoutes (mocks) {
