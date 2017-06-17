@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/npm/npm-registry-mock.png?branch=master)](https://travis-ci.org/npm/npm-registry-mock)
-[![Dependency Status](https://gemnasium.com/npm/npm-registry-mock.png)](https://gemnasium.com/npm/npm-registry-mock)
+[![Build Status](https://travis-ci.org/npm/npm-registry-mock.svg?branch=master)](https://travis-ci.org/npm/npm-registry-mock)
+[![Dependency Status](https://gemnasium.com/npm/npm-registry-mock.svg)](https://gemnasium.com/npm/npm-registry-mock)
 
-#npm-registry-mock
+# npm-registry-mock
 
-##Mocked Packages
+## Mocked Packages
 
 Currently mocked packages are:
 
@@ -31,7 +31,7 @@ Currently mocked packages are:
 
 `checker` at 0.5.1, 0.5.2
 
-##Usage
+## Usage
 
 Installing underscore 1.3.1:
 
@@ -80,7 +80,7 @@ mr({
 
 ```
 
-##Adding a new fixture
+## Adding a new fixture
 
 Although ideally we stick with the packages already mocked when writing new tests, in some cases it can be necessary to recreate a certain pathological or unusual scenario in the mock registry. In that case you can run
 
@@ -90,7 +90,7 @@ $ ./add-fixture.sh my-weird-package 1.2.3
 
 to add that package to the fixtures directory.
 
-##Breaking Changes for 1.0
+## Breaking Changes for 1.0
  - the callback returns `err, server` now, instead of just server (https://github.com/npm/npm-registry-mock/issues/20)
  - options must be of type `object`
  - a "plugin" is injected via options.plugin, not as a mock being a function
