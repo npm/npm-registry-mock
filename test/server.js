@@ -66,9 +66,9 @@ describe("registry mocking - npm.install", function () {
   it("sends the module as tarball (version specified)", function (done) {
     mr({port: port}, function (err, s) {
       if (err) return done(err)
-      npm.load({cache: tempdir, registry: address}, function () {
+      npm.load({audit: false, cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, ["underscore@1.3.1"], function (err) {
-          require.cache[path] = null
+          delete require.cache[path]
           var version = require(path).version
           assert.equal(version, "1.3.1")
           s.close()
@@ -80,9 +80,9 @@ describe("registry mocking - npm.install", function () {
   it("sends the module as tarball (no version specified -- latest)", function (done) {
     mr({port: port}, function (err, s) {
       if (err) return done(err)
-      npm.load({cache: tempdir, registry: address}, function () {
+      npm.load({audit: false, cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, ["underscore"], function (err) {
-          require.cache[path] = null
+          delete require.cache[path]
           var version = require(path).version
           assert.equal(version, "1.5.1")
           s.close()
@@ -94,7 +94,7 @@ describe("registry mocking - npm.install", function () {
   it("i have a test package with one dependency", function (done) {
     mr({port: port}, function (err, s) {
       if (err) return done(err)
-      npm.load({cache: tempdir, registry: address}, function () {
+      npm.load({audit: false, cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, ["test-package-with-one-dep"], function (err) {
           var exists = fs.existsSync(tempdir + "/node_modules/test-package/package.json")
           assert.ok(exists)
@@ -125,7 +125,7 @@ describe("extending the predefined mocks with custom ones", function () {
         request(address + "/ente400", function (er, res) {
           assert.equal(res.body, JSON.stringify({ente400: "true"}))
           assert.equal(res.statusCode, 400)
-          npm.load({cache: tempdir, registry: address}, function () {
+          npm.load({audit: false, cache: tempdir, registry: address}, function () {
             npm.commands.install(tempdir, ["async@0.1.0"], function (err) {
               var exists = fs.existsSync(tempdir + "/node_modules/async/package.json")
               assert.ok(exists)
