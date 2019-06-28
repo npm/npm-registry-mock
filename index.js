@@ -58,6 +58,13 @@ function start (options, cb) {
             res = require(__dirname + "/fixtures" + route)
             res = replaceRegistry(res)
 
+            var escapeScoped = route.replace(/^(\/@[^\/]+)\//, '$1%2f')
+            if (escapeScoped !== route) {
+              hockServer[method](escapeScoped)
+                .many({max: maxReq, min: minReq})
+                .reply(status, res)
+            }
+
             return hockServer[method](route)
               .many({max: maxReq, min: minReq})
               .reply(status, res)

@@ -63,7 +63,7 @@ describe("serving a namespaced package", function () {
     mr(port, function (err, s) {
       if (err) return done(err)
       var client = new RC(conf)
-      client.get(address + "/@isaacs/namespace-test", {}, function (er, data, raw, res) {
+      client.get(address + "/@isaacs%2fnamespace-test", {}, function (er, data, raw, res) {
         assert.equal(data._id, "@isaacs/namespace-test")
         s.close(() => done(er))
       })
