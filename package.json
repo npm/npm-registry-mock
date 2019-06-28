@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "hock": "~0.2.5",
+    "readdir-scoped-modules": "^1.1.0",
     "util-extend": "~1.0.1"
   },
   "devDependencies": {

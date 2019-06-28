@@ -42,8 +42,7 @@ describe("registry mocking - RegistryClient", function () {
       var client = new RC(conf)
       client.get(address + "/underscore", {}, function (er, data, raw, res) {
         assert.equal(data._id, "underscore")
-        s.close()
-        done(er)
+        s.close(() => done(er))
       })
     })
   })
@@ -53,8 +52,20 @@ describe("registry mocking - RegistryClient", function () {
       var client = new RC(conf)
       client.get(address + "/underscore/latest", {},function (er, data, raw, res) {
         assert.equal(data._id, "underscore@1.5.1")
-        s.close()
-        done(er)
+        s.close(() => done(er))
+      })
+    })
+  })
+})
+
+describe("serving a namespaced package", function () {
+  it("serves namespaced package", function (done) {
+    mr(port, function (err, s) {
+      if (err) return done(err)
+      var client = new RC(conf)
+      client.get(address + "/@isaacs/namespace-test", {}, function (er, data, raw, res) {
+        assert.equal(data._id, "@isaacs/namespace-test")
+        s.close(() => done(er))
       })
     })
   })
@@ -64,42 +75,41 @@ describe("registry mocking - npm.install", function () {
   var path = tempdir + "/node_modules/underscore/package.json"
 
   it("sends the module as tarball (version specified)", function (done) {
-    mr({port: port}, function (err, s) {
+    mr(port, function (err, s) {
       if (err) return done(err)
       npm.load({audit: false, cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, ["underscore@1.3.1"], function (err) {
           delete require.cache[path]
           var version = require(path).version
           assert.equal(version, "1.3.1")
-          s.close()
-          done()
+          s.close(() => done())
         })
       })
     })
   })
   it("sends the module as tarball (no version specified -- latest)", function (done) {
-    mr({port: port}, function (err, s) {
+    mr(port, function (err, s) {
       if (err) return done(err)
       npm.load({audit: false, cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, ["underscore"], function (err) {
           delete require.cache[path]
           var version = require(path).version
           assert.equal(version, "1.5.1")
-          s.close()
-          done()
+          s.close(() => done())
         })
       })
     })
   })
   it("i have a test package with one dependency", function (done) {
-    mr({port: port}, function (err, s) {
+    mr(port, function (err, s) {
       if (err) return done(err)
       npm.load({audit: false, cache: tempdir, registry: address}, function () {
         npm.commands.install(tempdir, ["test-package-with-one-dep"], function (err) {
+          console.error(err)
           var exists = fs.existsSync(tempdir + "/node_modules/test-package/package.json")
+          console.error(require('child_process').spawnSync('find', ['.'], { cwd: tempdir}).stdout.toString())
           assert.ok(exists)
-          s.close()
-          done()
+          s.close(() => done())
         })
       })
     })
@@ -129,8 +139,7 @@ describe("extending the predefined mocks with custom ones", function () {
             npm.commands.install(tempdir, ["async@0.1.0"], function (err) {
               var exists = fs.existsSync(tempdir + "/node_modules/async/package.json")
               assert.ok(exists)
-              s.close()
-              done()
+              s.close(() => done(er))
             })
           })
         })
@@ -151,8 +160,7 @@ describe("extending the predefined mocks with custom ones", function () {
           assert.notEqual(data.dist.tarball,
             "http://registry.npmjs.org/async/-/async-0.1.0.tgz")
           assert.ok(/localhost|\[::\]/.test(data.dist.tarball))
-          s.close()
-          done(er)
+          s.close(() => done(er))
         })
       })
     })
@@ -168,8 +176,7 @@ describe("extending the predefined mocks with custom ones", function () {
       if (err) return done(err)
       request(address + "/foo.js", function (er, res) {
         assert.equal(res.body, file)
-        s.close()
-        done()
+        s.close(() => done(er))
       })
     })
   })
@@ -188,8 +195,7 @@ describe("extending the predefined mocks with custom ones", function () {
         var client = new RC(conf)
         client.get(address + "/underscore/latest", {}, function (er, data, raw, res) {
           assert.equal(data._id, "underscore@1.5.1")
-          s.close()
-          done(er)
+          s.close(() => done(er))
         })
       })
     })
@@ -206,8 +212,7 @@ describe("extending the predefined mocks with custom ones", function () {
       if (err) return done(err)
       request(address + "/package.js", function (er, res) {
         assert.equal(res.body, JSON.stringify({"ente" : true}))
-        s.close()
-        done()
+        s.close(() => done())
       })
     })
   })
@@ -227,8 +232,7 @@ describe("extending the predefined mocks with custom ones", function () {
         var client = new RC(conf)
         client.get(address + "/underscore/1.3.1", {}, function (er, data, raw, res) {
           assert.equal(data._id, "async@0.1.0")
-          s.close()
-          done(er)
+          s.close(() => done(er))
         })
       })
     })
@@ -253,8 +257,7 @@ describe("injecting functions", function () {
           request(address + "/test", function (er, res) {
             assert.deepEqual(res.body, JSON.stringify({lala: "true"}))
             assert.equal(res.statusCode, 200)
-            s.close()
-            done()
+            s.close(() => done())
           })
         })
       })
@@ -271,8 +274,7 @@ describe("injecting functions", function () {
       var client = new RC(conf)
       client.get(address + "/underscore/latest", {}, function (er, data, raw, res) {
         assert.equal(data._id, "underscore@1.5.1")
-        s.close()
-        done(er)
+        s.close(() => done(er))
       })
     })
   })
@@ -285,8 +287,7 @@ describe("api", function () {
       var client = new RC(conf)
       client.get(address + "/underscore/latest", {}, function (er, data, raw, res) {
         assert.equal(data._id, "underscore@1.5.1")
-        s.close()
-        done(er)
+        s.close(() => done(er))
       })
     })
   })
@@ -301,8 +302,7 @@ describe("api", function () {
       })
       client.get(realUrl + "/underscore/latest", {}, function (er, data, raw, res) {
         assert.equal(data._id, "underscore@1.5.1")
-        s.close()
-        done(er)
+        s.close(() => done(er))
       })
     })
   })
@@ -320,8 +320,7 @@ describe('multiple requests', function () {
         client.get(address + '/underscore/latest', {}, function (er, data, raw, res) {
           assert.equal(er, null)
           client.get(address + '/underscore/latest', {}, function (er, data, raw, res) {
-            s.close()
-            done(er)
+            s.close(() => done(er))
           })
         })
       })
