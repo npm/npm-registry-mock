@@ -14,8 +14,10 @@ mr({port: 1331}, function (err, s) {
   exec(`npm install --cache ${tempdir.sync()} --registry http://localhost:1331 --no-audit`, { cwd: testFolder, env: process.env }, (err, stdout) => {
     if (err) {
       console.error(err)
+      process.exit(1)
     }
     assert.equal(readFileSync(path.join(testFolder, 'node_modules/underscore/underscore.js')).toString().slice(0, 10), '//MODIFIED')
+    }
     s.close()
   })
 })
