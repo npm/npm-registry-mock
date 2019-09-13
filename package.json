@@ -9,6 +9,7 @@
   "dependencies": {
     "hock": "~0.2.5",
     "readdir-scoped-modules": "^1.1.0",
+    "tempdir": "^2.0.0",
     "util-extend": "^1.0.3"
   },
   "devDependencies": {
