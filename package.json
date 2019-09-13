@@ -4,7 +4,7 @@
   "description": "mock the npm registry",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "node resolved-test.js"
   },
   "dependencies": {
     "hock": "~0.2.5",
