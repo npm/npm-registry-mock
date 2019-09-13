@@ -17,7 +17,6 @@ mr({port: 1331}, function (err, s) {
       process.exit(1)
     }
     assert.equal(readFileSync(path.join(testFolder, 'node_modules/underscore/underscore.js')).toString().slice(0, 10), '//MODIFIED')
-    }
     s.close()
   })
 })
