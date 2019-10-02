@@ -49,7 +49,7 @@ function start (options, cb) {
 
         function replaceRegistry (res) {
           return JSON.stringify(res)
-                  .replace(/http:\/\/registry\.npmjs\.org/ig, realUrl)
+                  .replace(/https?:\/\/registry\.npmjs\.org/ig, realUrl)
         }
 
         function next () {
