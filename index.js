@@ -1,12 +1,11 @@
-var path = require("path")
-var fs = require("fs")
-var url = require("url")
+var path = require('path')
+var fs = require('fs')
+var url = require('url')
 
-var hock = require("hock")
-var extend = require("util-extend")
+var hock = require('hock')
+var extend = require('util-extend')
 
-var predefinedMocks = require("./lib/predefines.js").predefinedMocks
-
+var predefinedMocks = require('./lib/predefines.js').predefinedMocks
 
 module.exports = start
 function start (options, cb) {
@@ -15,11 +14,15 @@ function start (options, cb) {
   var port = options.port === undefined ? 1331 : options.port
   var mocks = options.mocks === undefined ? {} : options.mocks
   var plugin = options.plugin === undefined ? function () {} : options.plugin
-  if (options.port === 0) options.port = '0' // work around hock 0.x stripping the port arg if false
+  if (options.port === 0) {
+    options.port = '0'
+  } // work around hock 0.x stripping the port arg if false
 
   var hockServer = hock.createHock(options, function (err) {
     hockServer._server.removeListener('error', cb)
-    if (err) return cb(err)
+    if (err) {
+      return cb(err)
+    }
     var realUrl = 'http://localhost:' + hockServer.address().port
 
     mocks = extendRoutes(mocks)
@@ -35,38 +38,43 @@ function start (options, cb) {
         var customTarget = mocks[method][route][1]
         var target
 
-        if (customTarget && typeof customTarget === "string")
+        if (customTarget && typeof customTarget === 'string') {
           target = customTarget
-        else
-          target = __dirname + "/fixtures" + route
+        } else {
+          target = __dirname + '/fixtures' + route
+        }
         fs.lstat(target, function (err, stats) {
-          if (err) return next()
-          if (stats.isDirectory()) return next()
+          if (err) {
+            return next()
+          }
+          if (stats.isDirectory()) {
+            return next()
+          }
           return hockServer[method](route)
-            .many({max: maxReq, min: minReq})
+            .many({ max: maxReq, min: minReq })
             .replyWithFile(status, target)
         })
 
         function replaceRegistry (res) {
           return JSON.stringify(res)
-                  .replace(/https?:\/\/registry\.npmjs\.org/ig, realUrl)
+            .replace(/https?:\/\/registry\.npmjs\.org/ig, realUrl)
         }
 
         function next () {
           var res
           if (!customTarget) {
-            res = require(__dirname + "/fixtures" + route)
+            res = require(__dirname + '/fixtures' + route)
             res = replaceRegistry(res)
 
             var escapeScoped = route.replace(/^(\/@[^\/]+)\//, '$1%2f')
             if (escapeScoped !== route) {
               hockServer[method](escapeScoped)
-                .many({max: maxReq, min: minReq})
+                .many({ max: maxReq, min: minReq })
                 .reply(status, res)
             }
 
             return hockServer[method](route)
-              .many({max: maxReq, min: minReq})
+              .many({ max: maxReq, min: minReq })
               .reply(status, res)
           }
 
@@ -78,7 +86,7 @@ function start (options, cb) {
 
           res = replaceRegistry(res)
           hockServer[method](route)
-            .many({max: maxReq, min: minReq})
+            .many({ max: maxReq, min: minReq })
             .reply(status, res)
         }
       })

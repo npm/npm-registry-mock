@@ -4,7 +4,13 @@
   "description": "mock the npm registry",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "tap",
+    "lint": "eslint \"**/*.js\"",
+    "postlint": "template-oss-check",
+    "template-oss-apply": "template-oss-apply --force",
+    "lintfix": "npm run lint -- --fix",
+    "snap": "tap",
+    "posttest": "npm run lint"
   },
   "dependencies": {
     "hock": "~0.2.5",
@@ -12,18 +18,21 @@
     "util-extend": "^1.0.3"
   },
   "devDependencies": {
+    "@npmcli/eslint-config": "^4.0.0",
+    "@npmcli/template-oss": "4.6.0",
     "mkdirp": "^0.5.1",
     "mocha": "^3.0.2",
     "npm": ">=4",
     "npm-registry-client": "^7.2.1",
     "request": "^2.73.0",
-    "rimraf": "^2.5.3"
+    "rimraf": "^2.5.3",
+    "tap": "^16.3.0"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/npm/npm-registry-mock.git"
+    "url": "https://github.com/npm/npm-registry-mock.git"
   },
-  "author": "Robert Kowalski <rok@kowalski.gd>",
+  "author": "GitHub Inc.",
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/npm/npm-registry-mock/issues"
@@ -32,5 +41,22 @@
     "npm",
     "registry",
     "testing"
-  ]
+  ],
+  "files": [
+    "bin/",
+    "lib/"
+  ],
+  "engines": {
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
+  },
+  "templateOSS": {
+    "//@npmcli/template-oss": "This file is partially managed by @npmcli/template-oss. Edits may be overwritten.",
+    "version": "4.6.0"
+  },
+  "tap": {
+    "nyc-arg": [
+      "--exclude",
+      "tap-snapshots/**"
+    ]
+  }
 }
